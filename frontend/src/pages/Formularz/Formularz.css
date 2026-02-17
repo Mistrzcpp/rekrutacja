@@ -1,0 +1,7 @@
+.przyciski {
+  display: flex;
+  justify-content: space-between;
+}
+th {
+  text-transform: capitalize;
+}
