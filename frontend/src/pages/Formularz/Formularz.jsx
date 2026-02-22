@@ -48,7 +48,7 @@ function Formularz() {
         onClick={() => navigate("/")}
       ></button>
 
-      <div className="formularz container">
+      <div className="formularz container col-8 mb-3">
         <ProgressBar strona={strona} />
         {strona === 1 && (
           <Strona1
