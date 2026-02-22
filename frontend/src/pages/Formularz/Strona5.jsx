@@ -20,17 +20,12 @@ function Strona5({
       .catch((err) => console.error(err));
   }, []);
 
-  const dodatkowePrzedmioty = () => {
-    const wybrane = [
-      formDane.kierunek_1,
-      formDane.kierunek_2,
-      formDane.kierunek_3,
-    ];
-    const przedmioty = kierunki
-      .filter((k) => wybrane.includes(k.id.toString()))
-      .map((k) => k.przedmiot)
-      .filter(Boolean);
-    return przedmioty.slice(0, 3);
+  const dodatkowyPrzedmiot = () => {
+    const kierunek = kierunki.find(
+      (k) => k.id.toString() === formDane.kierunek_1,
+    );
+
+    return kierunek?.przedmiot || null;
   };
 
   return (
@@ -67,7 +62,7 @@ function Strona5({
             ))}
         </select>
       </div>
-      {formDane.ilosc_kierunkow >= 1 && (
+      {
         <div className="mb-3">
           <label htmlFor="kierunek_2">Wybierz drugi kierunek</label>
           <select
@@ -92,35 +87,33 @@ function Strona5({
               ))}
           </select>
         </div>
+      }
+      {formDane.szkola == "LO" && formDane.kierunek_2 != "" && (
+        <div className="mb-3">
+          <label htmlFor="kierunek_3">Wybierz trzeci kierunek</label>
+          <select
+            className="form-select mb-3"
+            id="kierunek_3"
+            value={formDane.kierunek_3}
+            onChange={(e) =>
+              setFormDane({
+                ...formDane,
+                kierunek_3: e.target.value,
+                ilosc_kierunkow: 3,
+              })
+            }
+          >
+            <option value="">Brak</option>
+            {kierunki
+              .filter((k) => k.szkola == formDane.szkola)
+              .map((k) => (
+                <option key={k.id} value={k.id}>
+                  {k.nazwa}
+                </option>
+              ))}
+          </select>
+        </div>
       )}
-      {formDane.ilosc_kierunkow >= 2 &&
-        formDane.szkola == "LO" &&
-        formDane.kierunek_2 != "" && (
-          <div className="mb-3">
-            <label htmlFor="kierunek_3">Wybierz trzeci kierunek</label>
-            <select
-              className="form-select mb-3"
-              id="kierunek_3"
-              value={formDane.kierunek_3}
-              onChange={(e) =>
-                setFormDane({
-                  ...formDane,
-                  kierunek_3: e.target.value,
-                  ilosc_kierunkow: 3,
-                })
-              }
-            >
-              <option value="">Brak</option>
-              {kierunki
-                .filter((k) => k.szkola == formDane.szkola)
-                .map((k) => (
-                  <option key={k.id} value={k.id}>
-                    {k.nazwa}
-                  </option>
-                ))}
-            </select>
-          </div>
-        )}
 
       <div className="form-check mb-3">
         <input
@@ -157,6 +150,23 @@ function Strona5({
         </label>
       </div>
 
+      <div className="form-check mb-3">
+        <input
+          className="form-check-input"
+          type="checkbox"
+          id="oryginal_swiadectwa"
+          checked={formDane.oryginal_swiadectwa}
+          onChange={(e) =>
+            setFormDane({
+              ...formDane,
+              oryginal_swiadectwa: e.target.checked,
+            })
+          }
+        />
+        <label className="form-check-label" htmlFor="oryginal_swiadectwa">
+          Oryginał świadectwa
+        </label>
+      </div>
       <div className="container col-10 mb-3">
         <table className="table table-striped table-hover">
           <thead>
@@ -272,9 +282,9 @@ function Strona5({
                 />
               </td>
             </tr>
-            {dodatkowePrzedmioty().map((przedmiot, id) => (
-              <tr key={`dodatkowy_przedmiot_${id + 1}`}>
-                <th>{przedmiot}</th>
+            {dodatkowyPrzedmiot() && (
+              <tr>
+                <th>{dodatkowyPrzedmiot()}</th>
                 <td>
                   <input
                     type="number"
@@ -282,18 +292,18 @@ function Strona5({
                     required
                     min={1}
                     max={6}
-                    value={formDane[`dodatkowy_przedmiot_${id + 1}_ocena`]}
+                    value={formDane.ocena_dodatkowa}
                     onChange={(e) =>
                       setFormDane({
                         ...formDane,
-                        [`dodatkowy_przedmiot_${id + 1}_ocena`]: e.target.value,
+                        ocena_dodatkowa: e.target.value,
                       })
                     }
                   />
                 </td>
                 <td></td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
@@ -302,11 +312,11 @@ function Strona5({
       <select
         className="form-select mb-3"
         id="wiodacy_jezyk_obcy"
-        value={formDane.wiodacy_jezyk_obcy_id}
+        value={formDane.wiodacy_jezyk_obcy}
         onChange={(e) =>
           setFormDane({
             ...formDane,
-            wiodacy_jezyk_obcy_id: e.target.value,
+            wiodacy_jezyk_obcy: e.target.value,
           })
         }
         required

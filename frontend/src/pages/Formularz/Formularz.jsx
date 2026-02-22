@@ -6,11 +6,12 @@ import Strona4 from "./Strona4";
 import Strona5 from "./Strona5";
 import formDaneInit from "./formDaneInit";
 import "./Formularz.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { mapApiToForm } from "../../map/mappers";
 
-function Formularz() {
+function Formularz({ dane, edytuj }) {
   const navigate = useNavigate();
   const [strona, setStrona] = useState(1);
   const [formDane, setFormDane] = useState(formDaneInit);
@@ -21,20 +22,48 @@ function Formularz() {
   const dalej = () => setStrona((s) => Math.min(s + 1, 5));
   const wstecz = () => setStrona((s) => Math.max(s - 1, 1));
 
+  useEffect(() => {
+    if (dane) {
+      setFormDane(mapApiToForm(dane));
+    }
+  }, [dane]);
+
   const wyslijFormularz = async () => {
     setLadowanie(true);
     //console.log(formDane);
-    try {
-      const res = await axios.post("http://localhost:5000/api/dodaj", formDane);
-      //setSuccess(true);
-      navigate("/");
-      return res.data;
-    } catch (error) {
-      console.error(error);
-      setError(true);
-      throw error;
-    } finally {
-      setLadowanie(false);
+    if (edytuj) {
+      const id = formDane.wniosek_id;
+      try {
+        const res = await axios.put(
+          `http://localhost:5000/api/edytuj/${id}`,
+          formDane,
+        );
+        //setSuccess(true);
+        navigate("/");
+        return res.data;
+      } catch (error) {
+        console.error(error);
+        setError(true);
+        throw error;
+      } finally {
+        setLadowanie(false);
+      }
+    } else {
+      try {
+        const res = await axios.post(
+          "http://localhost:5000/api/dodaj",
+          formDane,
+        );
+        //setSuccess(true);
+        navigate("/");
+        return res.data;
+      } catch (error) {
+        console.error(error);
+        setError(true);
+        throw error;
+      } finally {
+        setLadowanie(false);
+      }
     }
   };
 
@@ -73,15 +102,15 @@ function Formularz() {
             setFormDane={setFormDane}
           />
         )}
-        {strona === 4 && (
+        {/* {strona === 4 && (
           <Strona4
             dalej={dalej}
             wstecz={wstecz}
             formDane={formDane}
             setFormDane={setFormDane}
           />
-        )}
-        {strona === 5 && (
+        )} */}
+        {strona === 4 && (
           <Strona5
             dalej={dalej}
             wstecz={wstecz}

@@ -1,5 +1,6 @@
 const formDaneInit = {
   // Strona 1
+  wniosek_id: "",
   szkola: "",
   imie: "",
   drugie_imie: "",
@@ -61,12 +62,11 @@ const formDaneInit = {
   egzamin_polski: "",
   egzamin_matematyka: "",
   egzamin_angielski: "",
-  dodatkowy_przedmiot_1_ocena: "",
-  dodatkowy_przedmiot_2_ocena: "",
-  dodatkowy_przedmiot_3_ocena: "",
+  ocena_dodatkowa: "",
   wiodacy_jezyk_obcy: "angielski",
   dodatkowy_jezyk_obcy: "",
   swiadectwo_z_wyroznieniem: false,
+  oryginal_swiadectwa: false,
 };
 
 export default formDaneInit;

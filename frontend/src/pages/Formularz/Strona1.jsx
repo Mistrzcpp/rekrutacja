@@ -101,7 +101,6 @@ function Strona1({ dalej, formDane, setFormDane }) {
         <input
           type="text"
           className="form-control"
-          pattern="[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż-]+"
           value={formDane.miejsce_urodzenia}
           onChange={(e) =>
             setFormDane({ ...formDane, miejsce_urodzenia: e.target.value })
