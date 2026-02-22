@@ -164,18 +164,28 @@ function SzczegolyWniosku({ dane }) {
               <strong>Szkoła:</strong> {dane.w_szkola}
             </p>
             <p>
-              <strong>Kierunek:</strong> {dane.kierunek_nazwa}
+              <strong>Kierunek 1:</strong> {dane.kierunek_1_nazwa}
+            </p>
+            <p>
+              <strong>Kierunek 2:</strong> {dane.kierunek_2_nazwa}
+            </p>
+            <p>
+              <strong>Kierunek 3:</strong> {dane.kierunek_3_nazwa}
             </p>
             <p>
               <strong>Punkty:</strong> {dane.w_punkty}
             </p>
             <p>
-              <strong>Pierwszy wybór:</strong>{" "}
+              <strong>Pierwszy wybór szkoły:</strong>{" "}
               {dane.w_pierwszy_wybor ? "Tak" : "Nie"}
             </p>
             <p>
               <strong>Świadectwo z wyróżnieniem:</strong>{" "}
               {dane.w_wyroznienie ? "Tak" : "Nie"}
+            </p>
+            <p>
+              <strong>Oryginał świadectwa:</strong>{" "}
+              {dane.w_oryginal ? "Tak" : "Nie"}
             </p>
             <p>
               <strong>Wiodący język obcy:</strong> {dane.w_wiodacy_jezyk}

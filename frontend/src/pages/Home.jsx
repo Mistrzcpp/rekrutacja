@@ -39,7 +39,7 @@ function Home() {
       <div
         className="card home-card"
         style={{ width: "18rem" }}
-        onClick={() => navigate("/dyrektor")}
+        onClick={() => navigate("/klasy")}
       >
         <img src={klasy} className="card-img-top" alt="lo" />
         <div className="card-body">

@@ -190,37 +190,44 @@ router.post("/dodaj", async (req, res) => {
     if (d.ocena_angielski == 3) punkty += 8;
     if (d.ocena_angielski == 2) punkty += 2;
 
-    for (let i = 0; i < wybraneKierunki.length; i++) {
-      const ocenaDodatkowa = d[`dodatkowy_przedmiot_${i + 1}_ocena`] || null;
+    const ocenaDodatkowa = d.ocena_dodatkowa;
 
-      if (ocenaDodatkowa == 6) punkty += 18;
-      if (ocenaDodatkowa == 5) punkty += 17;
-      if (ocenaDodatkowa == 4) punkty += 14;
-      if (ocenaDodatkowa == 3) punkty += 8;
-      if (ocenaDodatkowa == 2) punkty += 2;
+    if (ocenaDodatkowa == 6) punkty += 18;
+    if (ocenaDodatkowa == 5) punkty += 17;
+    if (ocenaDodatkowa == 4) punkty += 14;
+    if (ocenaDodatkowa == 3) punkty += 8;
+    if (ocenaDodatkowa == 2) punkty += 2;
 
-      await client.query(
-        `INSERT INTO wnioski
-      (data, kandydat_id, szkola, kierunek_id,
-       wiodacy_jezyk_obcy, dodatkowy_jezyk_obcy,
-       pierwszy_wybor_szkoly, ktory_wybor_kierunku,
-       swiadectwo_z_wyroznieniem, wynik_id, ocena_dodatkowa, punkty)
-     VALUES (NOW(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-        [
-          kandydatId,
-          d.szkola,
-          wybraneKierunki[i],
-          d.wiodacy_jezyk_obcy,
-          d.dodatkowy_jezyk_obcy || null,
-          d.pierwszy_wybor_szkoly,
-          i + 1,
-          d.swiadectwo_z_wyroznieniem,
-          wynikId,
-          ocenaDodatkowa,
-          Math.round(punkty),
-        ],
-      );
-    }
+    await client.query(
+      `INSERT INTO wnioski
+   (data, kandydat_id, szkola,
+    wiodacy_jezyk_obcy, dodatkowy_jezyk_obcy,
+    pierwszy_wybor_szkoly,
+    swiadectwo_z_wyroznieniem,
+    ocena_dodatkowa, punkty,
+    pierwszy_kierunek_id, drugi_kierunek_id, trzeci_kierunek_id, wynik_id)
+   VALUES
+   (NOW(), $1, $2,
+    $3, $4,
+    $5,
+    $6,
+    $7, $8,
+    $9, $10, $11, $12)`,
+      [
+        kandydatId,
+        d.szkola,
+        d.wiodacy_jezyk_obcy,
+        d.dodatkowy_jezyk_obcy || null,
+        d.pierwszy_wybor_szkoly,
+        d.swiadectwo_z_wyroznieniem,
+        ocenaDodatkowa,
+        Math.round(punkty),
+        wybraneKierunki[0] || null,
+        wybraneKierunki[1] || null,
+        wybraneKierunki[2] || null,
+        wynikId,
+      ],
+    );
 
     await client.query("COMMIT");
 

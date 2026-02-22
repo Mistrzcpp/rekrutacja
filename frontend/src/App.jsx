@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Lista from "./pages/Lista/Lista";
 import Formularz from "./pages/Formularz/Formularz";
+import Klasy from "./pages/Klasy/Klasy";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/lista" element={<Lista />} />
         <Route path="/formularz" element={<Formularz />} />
+        <Route path="/klasy" element={<Klasy />} />
       </Routes>
     </BrowserRouter>
   );
