@@ -10,6 +10,44 @@ export default function PrzydzialKlasy() {
   const [error, setError] = useState("");
   const [kierunki, setKierunki] = useState([]);
 
+  const exportCSV = () => {
+    if (!wynik?.przydzial) return;
+
+    const rows = [];
+
+    Object.entries(wynik.przydzial).forEach(([kierunekId, lista]) => {
+      const nazwa =
+        kierunki.find((k) => k.id == kierunekId)?.nazwa || kierunekId;
+
+      lista.forEach((k) => {
+        rows.push({
+          Kierunek: nazwa,
+          Imie: k.imie,
+          Nazwisko: k.nazwisko,
+          PESEL: k.pesel,
+          Punkty: k.punkty,
+          Wybor: k.wybor,
+          Telefon: k.numer_tel,
+        });
+      });
+    });
+
+    const csv =
+      "\uFEFF" +
+      [
+        Object.keys(rows[0]).join(";"),
+        ...rows.map((r) => Object.values(r).join(";")),
+      ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "przydzial.csv";
+    a.click();
+  };
+
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/kierunki")
@@ -84,6 +122,9 @@ export default function PrzydzialKlasy() {
         {wynik && (
           <div>
             <h3>Wyniki przydziału</h3>
+            <button className="btn btn-success mb-3" onClick={exportCSV}>
+              Eksport CSV
+            </button>
 
             {/* ACCORDION KIERUNKÓW */}
             <div className="accordion" id="accordionWyniki">
@@ -124,6 +165,8 @@ export default function PrzydzialKlasy() {
                                     <th>Nazwisko</th>
                                     <th>PESEL</th>
                                     <th>Punkty</th>
+                                    <th>Który wybór</th>
+                                    <th>Telefon matki</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -138,6 +181,8 @@ export default function PrzydzialKlasy() {
                                           {k.punkty}
                                         </span>
                                       </td>
+                                      <td>{k.wybor}</td>
+                                      <td>{k.numer_tel}</td>
                                     </tr>
                                   ))}
                                 </tbody>
@@ -181,7 +226,6 @@ export default function PrzydzialKlasy() {
                               <th>Imię</th>
                               <th>Nazwisko</th>
                               <th>PESEL</th>
-                              <th>Kierunek</th>
                               <th>Oryginał świadectwa</th>
                               <th>Pierwszy wybór szkoły</th>
                               <th>Punkty</th>
@@ -194,7 +238,6 @@ export default function PrzydzialKlasy() {
                                 <td>{k.imie}</td>
                                 <td>{k.nazwisko}</td>
                                 <td>{k.pesel}</td>
-                                <td>{k.nazwa}</td>
                                 <td>{k.oryginal ? "Tak" : "Nie"}</td>
                                 <td>{k.pierwszy_wybor ? "Tak" : "Nie"}</td>
                                 <td>

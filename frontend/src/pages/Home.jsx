@@ -1,6 +1,7 @@
 import dodaj from "../assets/dodaj.png";
 import lista from "../assets/lista.png";
 import klasy from "../assets/klasy.png";
+import imp from "../assets/import.png";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
 
@@ -37,7 +38,7 @@ function Home() {
       </div>
 
       <div
-        className="card home-card"
+        className="card home-card "
         style={{ width: "18rem" }}
         onClick={() => navigate("/klasy")}
       >
@@ -45,6 +46,18 @@ function Home() {
         <div className="card-body">
           <h5 className="card-title">Utwórz klasy</h5>
           <p className="card-text">Utwórz klasy dla kierunków</p>
+        </div>
+      </div>
+
+      <div
+        className="card home-card mx-3"
+        style={{ width: "18rem" }}
+        onClick={() => navigate("/importuj")}
+      >
+        <img src={imp} className="card-img-top" alt="importuj" />
+        <div className="card-body">
+          <h5 className="card-title">Importuj dane</h5>
+          <p className="card-text">Importuj dane w formacie csv</p>
         </div>
       </div>
     </div>

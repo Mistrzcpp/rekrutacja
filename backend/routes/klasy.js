@@ -7,62 +7,98 @@ router.post("/klasy", async (req, res) => {
 
   try {
     const { klasy } = req.body;
-    if (!klasy) {
-      return res.status(400).json({ error: "Brak danych klas" });
-    }
+    if (!klasy) return res.status(400).json({ error: "Brak danych klas" });
 
     const { rows: kandydaci } = await client.query(`
-     SELECT 
-     k.id as kandydat_id, 
-     t.imie, 
-     t.nazwisko, 
-     t.pesel, 
-     w.punkty, 
-     w.pierwszy_kierunek_id as kierunek_id, 
-     k2.nazwa,
-     w.pierwszy_wybor_szkoly as pierwszy_wybor,
-     w.oryginal_swiadectwa as oryginal 
-     FROM wnioski w 
-     JOIN kandydaci k ON w.kandydat_id = k.id 
-     join dane_osobowe t on K.dane_osobowe_id = T.id 
-     join kierunki k2 on w.pierwszy_kierunek_id = k2.id 
-     ORDER BY w.punkty DESC
+       SELECT 
+        k.id as kandydat_id,
+        t.imie,
+        t.nazwisko,
+        t.pesel,
+        w.punkty,
+        w.pierwszy_kierunek_id,
+        w.drugi_kierunek_id,
+        w.trzeci_kierunek_id,
+        t2.numer_tel,
+        w.pierwszy_wybor_szkoly as pierwszy_wybor,
+        w.oryginal_swiadectwa  as oryginal
+      FROM wnioski w
+      JOIN kandydaci k ON w.kandydat_id = k.id
+      JOIN dane_osobowe t ON k.dane_osobowe_id = t.id
+      join dane_osobowe t2 on k.dane_matki_id = t2.id 
+      ORDER BY w.punkty DESC
     `);
 
+    // inicjalizacja przydziału
     const przydzial = {};
-    const pozostali = [];
-
     for (const id in klasy) {
       przydzial[id] = [];
     }
 
-    for (const kandydat of kandydaci) {
-      const kierunek = kandydat.kierunek_id;
+    // dodajemy pole kontrolne do każdego kandydata
+    const kandydaciQueue = kandydaci.map((k) => ({
+      ...k,
+      currentPreferenceIndex: 0,
+    }));
 
-      if (
-        kierunek &&
-        przydzial[kierunek] &&
-        przydzial[kierunek].length < klasy[kierunek]
-      ) {
-        przydzial[kierunek].push({
-          id: kandydat.kandydat_id,
-          imie: kandydat.imie,
-          nazwisko: kandydat.nazwisko,
-          pesel: kandydat.pesel,
-          punkty: kandydat.punkty,
-        });
-      } else {
-        pozostali.push({
-          id: kandydat.kandydat_id,
-          imie: kandydat.imie,
-          nazwisko: kandydat.nazwisko,
-          pesel: kandydat.pesel,
-          nazwa: kandydat.nazwa,
-          punkty: kandydat.punkty,
-          pierwszy_wybor: kandydat.pierwszy_wybor,
-          oryginal: kandydat.oryginal,
-        });
+    function przydziel(kandydat) {
+      const preferencje = [
+        kandydat.pierwszy_kierunek_id,
+        kandydat.drugi_kierunek_id,
+        kandydat.trzeci_kierunek_id,
+      ];
+
+      while (kandydat.currentPreferenceIndex < preferencje.length) {
+        const kierunekId = preferencje[kandydat.currentPreferenceIndex];
+        kandydat.wybor = kandydat.currentPreferenceIndex + 1;
+
+        if (!kierunekId || !klasy[kierunekId]) {
+          kandydat.currentPreferenceIndex++;
+          continue;
+        }
+
+        const lista = przydzial[kierunekId];
+        const capacity = klasy[kierunekId];
+
+        // wolne miejsce
+        if (lista.length < capacity) {
+          lista.push({ ...kandydat });
+          return true;
+        }
+
+        // szukamy najsłabszego
+        let minIndex = 0;
+        for (let i = 1; i < lista.length; i++) {
+          if (lista[i].punkty < lista[minIndex].punkty) {
+            minIndex = i;
+          }
+        }
+
+        const najslabszy = lista[minIndex];
+
+        if (kandydat.punkty > najslabszy.punkty) {
+          // wyrzucamy najsłabszego
+          lista[minIndex] = { ...kandydat };
+
+          // zwiększamy preferencję wyrzuconemu
+          najslabszy.currentPreferenceIndex++;
+
+          // próbujemy go przydzielić dalej
+          return przydziel(najslabszy);
+        }
+
+        // jeśli nie ma więcej punktów → próbuje dalej
+        kandydat.currentPreferenceIndex++;
       }
+
+      return false;
+    }
+
+    const pozostali = [];
+
+    for (const kandydat of kandydaciQueue) {
+      const przydzielono = przydziel(kandydat);
+      if (!przydzielono) pozostali.push(kandydat);
     }
 
     res.json({ przydzial, pozostali });
