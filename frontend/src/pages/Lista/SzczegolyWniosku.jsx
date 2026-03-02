@@ -40,9 +40,9 @@ function SzczegolyWniosku({ dane }) {
             </p>
             <p>
               <strong>Data urodzenia:</strong>{" "}
-              {dane.k_data_urodzenia.slice(8, 10)}-
-              {dane.k_data_urodzenia.slice(5, 7)}-
-              {dane.k_data_urodzenia.slice(0, 4)}
+              {dane.k_data_urodzenia
+                ? `${dane.k_data_urodzenia.slice(8, 10)}-${dane.k_data_urodzenia.slice(5, 7)}-${dane.k_data_urodzenia.slice(0, 4)}`
+                : "brak danych"}
             </p>
 
             <p>
