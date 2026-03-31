@@ -17,8 +17,11 @@ router.post("/klasy", async (req, res) => {
         t.pesel,
         w.punkty,
         w.pierwszy_kierunek_id,
+        ki.nazwa as k1,
         w.drugi_kierunek_id,
+        ki2.nazwa as k2,
         w.trzeci_kierunek_id,
+        ki3.nazwa as k3,
         t2.numer_tel,
         w.pierwszy_wybor_szkoly as pierwszy_wybor,
         w.oryginal_swiadectwa  as oryginal
@@ -26,6 +29,9 @@ router.post("/klasy", async (req, res) => {
       JOIN kandydaci k ON w.kandydat_id = k.id
       JOIN dane_osobowe t ON k.dane_osobowe_id = t.id
       join dane_osobowe t2 on k.dane_matki_id = t2.id 
+      join kierunki ki on w.pierwszy_kierunek_id = ki.id 
+      join kierunki ki2 on w.drugi_kierunek_id  = ki2.id 
+      join kierunki ki3 on w.trzeci_kierunek_id  = ki3.id 
       ORDER BY w.punkty DESC
     `);
 

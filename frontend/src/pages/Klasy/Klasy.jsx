@@ -165,7 +165,9 @@ export default function PrzydzialKlasy() {
                                     <th>Nazwisko</th>
                                     <th>PESEL</th>
                                     <th>Punkty</th>
-                                    <th>Który wybór</th>
+                                    <th>Pierwszy wybór</th>
+                                    <th>Drugi wybór</th>
+                                    <th>Trzeci wybór</th>
                                     <th>Telefon matki</th>
                                   </tr>
                                 </thead>
@@ -181,7 +183,9 @@ export default function PrzydzialKlasy() {
                                           {k.punkty}
                                         </span>
                                       </td>
-                                      <td>{k.wybor}</td>
+                                      <td>{k.k1}</td>
+                                      <td>{k.k2}</td>
+                                      <td>{k.k3}</td>
                                       <td>{k.numer_tel}</td>
                                     </tr>
                                   ))}
@@ -228,6 +232,9 @@ export default function PrzydzialKlasy() {
                               <th>PESEL</th>
                               <th>Oryginał świadectwa</th>
                               <th>Pierwszy wybór szkoły</th>
+                              <th>Pierwszy wybór</th>
+                              <th>Drugi wybór</th>
+                              <th>Trzeci wybór</th>
                               <th>Punkty</th>
                             </tr>
                           </thead>
@@ -240,6 +247,9 @@ export default function PrzydzialKlasy() {
                                 <td>{k.pesel}</td>
                                 <td>{k.oryginal ? "Tak" : "Nie"}</td>
                                 <td>{k.pierwszy_wybor ? "Tak" : "Nie"}</td>
+                                <td>{k.k1}</td>
+                                <td>{k.k2}</td>
+                                <td>{k.k3}</td>
                                 <td>
                                   <span className="badge bg-danger">
                                     {k.punkty}
